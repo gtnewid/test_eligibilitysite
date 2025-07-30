@@ -1,0 +1,1745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Wing and MOFA Area Input with Date Change & Eligibility</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 470px;
+      margin: 40px auto;
+      padding: 0 15px;
+      background: #fafcff;
+    }
+    form {
+      margin-bottom: 20px;
+    }
+    label {
+      font-weight: bold;
+    }
+    select:disabled,
+    input[type="radio"]:disabled,
+    input[type="number"]:disabled,
+    input[type="text"]:disabled,
+    input[type="date"]:disabled {
+      background-color: #f0f0f0;
+      color: #555;
+      pointer-events: none;
+    }
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    #message, #mofaMessage, #unitMessage, #mofaAreaMessage, #estimationMessage {
+      margin-top: 10px;
+      color: red;
+    }
+    #finalMessage {
+      margin-top: 20px;
+      font-weight: bold;
+      color: green;
+    }
+    #summarySection, #questionSection, #allBasicInputsSection, #eligibilitySection {
+      display: none;
+    }
+    #summaryTableContainer, #allBasicInputsTableContainer, #eligibilityTableContainer, #hindCHSEligibilityTableContainer {
+      margin-bottom: 10px;
+    }
+    #nextButton, #submitDatesBtn, #nextButtonFromQuestion,
+    #compareButton {
+      display: none;
+      margin: 20px auto;
+      padding: 10px 25px;
+      font-size: 16px;
+      cursor: pointer;
+      display: block;
+    }
+    #questionSection label {
+      font-weight: bold;
+      font-size: 18px;
+    }
+    #changeDatesSelect {
+      margin-top: 10px;
+      font-size: 16px;
+      padding: 5px;
+      width: 150px;
+    }
+    #selectionDisplay {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #333;
+    }
+    #backToSummaryBtn {
+      margin-top: 25px;
+      padding: 8px 20px;
+      font-size: 15px;
+      cursor: pointer;
+      display: inline-block;
+    }
+    #dateInputsDiv {
+      margin-top: 20px;
+      max-width: 400px;
+    }
+    #dateInputsDiv label {
+      display: inline-block;
+      width: 200px;
+      font-weight: normal;
+      margin-bottom: 5px;
+    }
+    #dateInputsDiv input[type="date"] {
+      margin-bottom: 10px;
+      padding: 4px 6px;
+      width: 160px;
+    }
+    button.back-btn {
+      margin-right: 12px;
+      cursor: pointer;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      max-width: 470px;
+      margin: 0 auto 20px auto;
+      font-size: 1em;
+    }
+    table, th, td {
+      border: 1px solid #999;
+    }
+    th, td {
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    .pastel-blue-row {
+      background-color: #cce5ff;
+    }
+    .pastel-green-row {
+      background-color: #BEE5B0;
+    }
+    /* Mobile responsive styles */
+    @media (max-width: 600px) {
+      body {
+        max-width: 100vw;
+        margin: 0;
+        padding: 8px;
+        font-size: 1em;
+      }
+      #infoSection, #wingSelectionSection, #mofaQuestion, #estimationSection,
+      #unitSelection, #mofaInputSection, #summarySection, #questionSection,
+      #allBasicInputsSection, #eligibilitySection {
+        max-width: 98vw !important;
+        width: 98vw !important;
+        margin: 8px auto !important;
+        padding: 8px 2vw !important;
+      }
+      table {
+        font-size: 0.95em;
+        max-width: 98vw !important;
+        overflow-x: auto;
+        display: block;
+      }
+      th, td {
+        padding: 7px 2px;
+        font-size: 0.95em;
+      }
+      input, select, button {
+        font-size: 1em;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      #dateInputsDiv label {
+        width: 100%;
+        display: block;
+        margin-bottom: 2px;
+      }
+      #dateInputsDiv input[type="date"] {
+        width: 100%;
+      }
+      .back-btn,
+      #nextButton,
+      #submitDatesBtn,
+      #nextButtonFromQuestion,
+      #compareButton,
+      #backToSummaryBtn {
+        width: 100%;
+        margin-bottom: 8px;
+        min-width: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="infoSection" style="max-width:470px; margin:40px auto; padding:20px 15px; border:1px solid #ccc; border-radius:10px; background:#f9f9f9;">
+    <h2 style="text-align:center;">Eligibility Calculation Details</h2>
+    <br>
+    <h2 style="text-align:center;">This is <strong>NOT</strong> an official site</h2>
+    <ul style="font-size:16px; margin-bottom:30px;">
+      <li>
+        <strong>Ajmera:</strong>
+        <ul style="margin-left:20px;">
+          <li>Pre-DA rent:
+            <ul style="margin-left:20px;">
+              <li>C wing: <strong>3 months</strong> at <strong>Rs 80/sq.ft</strong></li>
+              <li>D &amp; E wings: <strong>9 months</strong> at <strong>Rs 80/sq.ft</strong></li>
+            </ul>
+          </li>
+          <li>No rent between DA and IOD.</li>
+        </ul>
+      </li>
+      <li style="margin-top:16px;">
+        <strong>Runwal:</strong>
+        <ul style="margin-left:20px;">
+          <li>Pre-DA rent:
+            <ul style="margin-left:20px;">
+              <li>C wing: <strong>6 months</strong> at <strong>Rs 80/sq.ft</strong></li>
+              <li>D &amp; E wings: <strong>9 months</strong> at <strong>Rs 80/sq.ft</strong></li>
+            </ul>
+          </li>
+          <li>
+            Between DA and IOD:
+            <ul style="margin-left:20px;">
+              <li>C, D and E wings: rent for maximum of <strong>8 months</strong> at <strong>Rs 85/sq.ft</strong></li>
+              <li>If A and B have to vacate, they get rent for a maximum of <strong>8 months</strong> or up to IOD, whichever is less, at <strong>Rs 85/sq.ft</strong></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li style="margin-top:16px;">
+        <strong>Dosti:</strong>
+        <ul style="margin-left:20px;">
+          <li>Offering <strong>₹10 Crore 68 Lakhs</strong> to the society, to be divided between all members who have had to vacate.</li>
+          <li>To calculate this split, we can assume what date A &amp; B will vacate – either the IOD date or earlier.</li>
+        </ul>
+      </li>
+    </ul>
+    <div style="font-size:15px; margin:18px 0 0 0; padding:8px 12px; background:#eef6ff; border-radius:6px; border:1px solid #dde6ef;">
+      <strong>Note:</strong> GST is calculated using the per square foot price at <strong>Launch rate</strong> and construction cost is assumed to be <strong>₹6,000/sq.ft. <br> It could be one of the four possibilities below</strong>.
+      <br><br>
+      Also, due to rounding off there might be variation for a few hundred rupees in some of the calculations
+    </div>
+    <button id="letsGoBtn" style="margin:30px auto 0 auto; display:block; padding:12px 30px; font-size:17px; background:#3399ff; color:#fff; border:none; border-radius:6px; cursor:pointer;">
+      Got it. Let's go
+    </button>
+  </div>
+
+  <!-- Initial Wing selection -->
+  <div id="wingSelectionSection" style="display:none;">
+    <h2>Select your wing</h2>
+    <form id="wingForm">
+      <label for="wingSelect">Select your wing:</label><br>
+      <select id="wingSelect" name="wingSelect" required>
+        <option value="" disabled selected>Select a wing</option>
+        <option value="A">A</option>
+        <option value="B">B</option>
+        <option value="C">C</option>
+        <option value="D">D</option>
+        <option value="E">E</option>
+      </select><br><br>
+      <button type="submit">Submit</button>
+    </form>
+    <div id="message"></div>
+  </div>
+
+  <!-- MOFA knowledge -->
+  <div id="mofaQuestion" style="display:none;">
+    <h2>MOFA Carpet Area Knowledge</h2>
+    <form id="knowledgeForm">
+      <label>Do you know your MOFA carpet area?</label><br>
+      <input type="radio" id="yes" name="knowsMofa" value="yes" required>
+      <label for="yes">Yes</label><br>
+      <input type="radio" id="no" name="knowsMofa" value="no" required>
+      <label for="no">No</label><br><br>
+      <button type="button" id="backToWing" class="back-btn">Back</button>
+      <button type="submit">Submit</button>
+    </form>
+    <div id="mofaMessage"></div>
+  </div>
+
+  <!-- Estimation from maintenance if no -->
+  <div id="estimationSection" style="display:none;">
+    <h2>Estimate MOFA Carpet Area</h2>
+    <p>I can estimate based on your Maintenance bill area. This will be a rough estimate.<br>
+      Please provide the area from your maintenance bill in square feet:</p>
+    <form id="estimationForm">
+      <button type="button" id="backToKnowledgeFromEstimate" class="back-btn">Back</button>
+      <input type="number" id="maintenanceArea" name="maintenanceArea" min="1" step="0.01" placeholder="e.g. 700.00" required autocomplete="off">
+      <button type="submit">Submit</button>
+    </form>
+    <div id="estimationMessage"></div>
+    <div id="estimationResult" style="margin-top:15px; font-weight:bold; color:green;"></div>
+  </div>
+
+  <!-- Unit selection -->
+  <div id="unitSelection" style="display:none;">
+    <h2>Select unit for MOFA carpet area</h2>
+    <form id="unitForm">
+      <button type="button" id="backToKnowledgeFromUnit" class="back-btn">Back</button><br>
+      <input type="radio" id="sqft" name="unit" value="sqft" required>
+      <label for="sqft">Square Feet (sq.ft.)</label><br>
+      <input type="radio" id="sqm" name="unit" value="sqm" required>
+      <label for="sqm">Square Meters (sq.m.)</label><br><br>
+      <button type="submit">Submit</button>
+    </form>
+    <div id="unitMessage"></div>
+  </div>
+
+  <!-- Manual MOFA area input -->
+  <div id="mofaInputSection" style="display:none;">
+    <h2>Enter your MOFA carpet areas (<span id="unitLabel"></span>)</h2>
+    <form id="mofaForm">
+      <button type="button" id="backToUnit" class="back-btn">Back</button><br>
+      <label for="flatArea">Flat carpet area:</label><br>
+      <input type="number" id="flatArea" name="flatArea" min="0" step="0.01" required autocomplete="off" placeholder="e.g. 450.75"><br><br>
+      <label for="commonArea">Common carpet area:</label><br>
+      <input type="number" id="commonArea" name="commonArea" min="0" step="0.01" required autocomplete="off" placeholder="e.g. 200.25"><br><br>
+      <button type="submit">Submit</button>
+    </form>
+    <div id="mofaAreaMessage"></div>
+  </div>
+
+  <!-- New Section: Prompt for Launch & Completion Price -->
+  <div id="priceEstimateSection" style="display:none;">
+    <h2>Estimate Price per Square Feet</h2>
+    <form id="priceEstimateForm">
+      <label for="launchPrice">Estimate price per sq.ft. on Launch:</label><br>
+      <input type="number" id="launchPrice" name="launchPrice" min="25000" max="60000" step="100" value="35000" required><br><br>
+      <label for="completionPrice">Estimate price per sq.ft. on Completion:</label><br>
+      <input type="number" id="completionPrice" name="completionPrice" min="25000" max="60000" step="100" value="35000" required><br><br>
+      <button type="submit">Submit</button>
+    </form>
+    <div id="priceEstimateMessage"></div>
+  </div>
+
+  <div id="finalMessage"></div>
+
+  <!-- Summary section with Next -->
+  <div id="summarySection">
+    <div id="summaryTableContainer"></div>
+    <button id="nextButton">Next</button>
+  </div>
+
+  <!-- Question section - ask if want to change dates -->
+  <div id="questionSection">
+    <label for="changeDatesSelect"><strong>Do you want to change DA, IOD or Date A and B vacate?</strong></label><br><br>
+    <label for="changeDatesSelect"><strong>This will impact backdate rent calculation for all wings (especially for Dosti)</strong></label><br>
+    <select id="changeDatesSelect" name="changeDatesSelect">
+      <option value="" disabled selected>Select Yes or No</option>
+      <option value="Yes">Yes</option>
+      <option value="No">No</option>
+    </select>
+
+    <div id="selectionDisplay"></div>
+
+    <!-- Date inputs if yes -->
+    <div id="dateInputsDiv" style="display:none;">
+      <label for="dateDAUpdate">Date of DA:</label>
+      <input type="date" id="dateDAUpdate" name="dateDAUpdate" required><br>
+
+      <label for="dateIODUpdate">Date of IOD:</label>
+      <input type="date" id="dateIODUpdate" name="dateIODUpdate" required><br>
+
+      <label for="dateABVacateUpdate">Date A and B wings vacate:</label>
+      <input type="date" id="dateABVacateUpdate" name="dateABVacateUpdate" required><br>
+
+      <button id="submitDatesBtn" type="button">Submit Dates</button>
+    </div>
+
+    <button id="nextButtonFromQuestion">Next</button>
+    <button id="backToSummaryBtn">Back</button>
+  </div>
+
+  <!-- All Basic Inputs after date submit -->
+  <div id="allBasicInputsSection">
+    <h3 style="text-align: center; margin-bottom: 10px;">All Basic Inputs</h3>
+    <div id="allBasicInputsTableContainer"></div>
+
+    <div id="eligibilitySection" style="display:none; margin-top: 20px; max-width: 470px;">
+      <h3 style="text-align: center; margin-bottom: 10px;">Your eligibility</h3>
+      <div id="eligibilityTableContainer"></div>
+
+      <h3 style="text-align: center; margin-top: 30px; margin-bottom: 10px;">Hind CHS eligibility</h3>
+      <div id="hindCHSEligibilityTableContainer"></div>
+    </div>
+
+    <button id="compareButton" style="display:block; margin: 20px auto; padding: 10px 25px; font-size: 16px; cursor: pointer;">
+      Compare
+    </button>
+  </div>
+
+<script>
+  // Stored MOFA carpet areas for each wing (all values in sq.ft.)
+  const wingAreas = {
+    A: { flatMOFA: 42133.53, totalMOFA: 45783.27 },
+    B: { flatMOFA: 16025.23, totalMOFA: 17340.59 },
+    C: { flatMOFA: 26444.35, totalMOFA: 28591.39 },
+    D: { flatMOFA: 26644.78, totalMOFA: 28794.50 },
+    E: { flatMOFA: 15961.72, totalMOFA: 17231.33 }
+  };
+
+  // Default dates (ISO format strings, will change for A & B vacate)
+  let currentDateDA = "2025-12-15";
+  let currentDateIOD = "2026-08-15";
+  let currentDateABVacate = "2026-08-15";
+
+  // Fixed vacate dates for D and E, and C wings
+  const dateDVacated = "2024-07-01";
+  const dateCVacated = "2025-02-01";
+
+  // Vacate dates per wing
+  let wingVacateDates = {
+    A: currentDateABVacate,
+    B: currentDateABVacate,
+    C: dateCVacated,
+    D: dateDVacated,
+    E: dateDVacated
+  };
+
+  // Conversion constants
+  const SQFT_TO_SQM = 0.092903;
+  const SQM_TO_SQFT = 10.7639;
+
+  // Rate constants per offer
+  const RATE_RUNWAL = 80;
+  const RATE_AJMERA = 80;
+  const RATE_DOSTI = 70;
+  const RATE_RUNWAL_DA_IOD = 85;
+
+  // Max months caps
+  const MAX_MONTHS_DA_TO_IOD = 8;
+
+  // Form data variables
+  let selectedWing = null;
+  let knowsMofa = null;
+  let selectedUnit = null;
+  let flatAreaValue = null;
+  let commonAreaValue = null;
+
+  // Add these variables to store the estimates
+  let launchPrice = 35000;
+  let completionPrice = 35000;
+
+
+  // DOM elements needed in multiple functions (ensure declared before use)
+  const flatAreaInput = document.getElementById('flatArea');
+  const commonAreaInput = document.getElementById('commonArea');
+  const priceEstimateSection = document.getElementById('priceEstimateSection');
+  const priceEstimateForm = document.getElementById('priceEstimateForm');
+  const priceEstimateMessage = document.getElementById('priceEstimateMessage');
+// DOM elements
+const infoSection = document.getElementById('infoSection');
+const letsGoBtn = document.getElementById('letsGoBtn');
+
+// At page load: only show info section, hide everything else
+document.addEventListener('DOMContentLoaded', function() {
+  showSection(infoSection);
+  hideSection(wingSelectionSection);
+  hideSection(mofaQuestion);
+  hideSection(estimationSection);
+  hideSection(unitSelection);
+  hideSection(mofaInputSection);
+  hideSection(summarySection);
+  hideSection(questionSection);
+  allBasicInputsSection.style.display = 'none';
+  eligibilitySection.style.display = 'none';
+});
+
+// Button handler
+letsGoBtn.onclick = function() {
+  // Hide info section
+  hideSection(infoSection);
+
+  // Show wing selection
+  showSection(wingSelectionSection);
+
+  // Reset forms/messages if needed
+  message.innerText = '';
+  finalMessage.innerText = '';
+  wingForm.reset();
+  enableForm(wingForm);
+  // (Other resets if required)
+};
+
+  // Alias for commonly used elements
+  const message = document.getElementById('message');
+  const mofaMessage = document.getElementById('mofaMessage');
+  const unitMessage = document.getElementById('unitMessage');
+  const mofaAreaMessage = document.getElementById('mofaAreaMessage');
+  const estimationMessage = document.getElementById('estimationMessage');
+  const estimationResult = document.getElementById('estimationResult');
+  const finalMessage = document.getElementById('finalMessage');
+  const wingSelectionSection = document.getElementById('wingSelectionSection');
+  const mofaQuestion = document.getElementById('mofaQuestion');
+  const estimationSection = document.getElementById('estimationSection');
+  const unitSelection = document.getElementById('unitSelection');
+  const mofaInputSection = document.getElementById('mofaInputSection');
+  const unitLabel = document.getElementById('unitLabel');
+  const summarySection = document.getElementById('summarySection');
+  const summaryTableContainer = document.getElementById('summaryTableContainer');
+  const nextButton = document.getElementById('nextButton');
+  const questionSection = document.getElementById('questionSection');
+  const changeDatesSelect = document.getElementById('changeDatesSelect');
+  const selectionDisplay = document.getElementById('selectionDisplay');
+  const dateInputsDiv = document.getElementById('dateInputsDiv');
+  const dateDAUpdate = document.getElementById('dateDAUpdate');
+  const dateIODUpdate = document.getElementById('dateIODUpdate');
+  const dateABVacateUpdate = document.getElementById('dateABVacateUpdate');
+  const submitDatesBtn = document.getElementById('submitDatesBtn');
+  const nextButtonFromQuestion = document.getElementById('nextButtonFromQuestion');
+  const backToSummaryBtn = document.getElementById('backToSummaryBtn');
+  const allBasicInputsSection = document.getElementById('allBasicInputsSection');
+  const allBasicInputsTableContainer = document.getElementById('allBasicInputsTableContainer');
+  const eligibilitySection = document.getElementById('eligibilitySection');
+  const eligibilityTableContainer = document.getElementById('eligibilityTableContainer');
+  const hindCHSEligibilityTableContainer = document.getElementById('hindCHSEligibilityTableContainer');
+  const compareButton = document.getElementById('compareButton');
+
+  // Utility functions
+  function showSection(section) { section.style.display = 'block'; }
+  function hideSection(section) { section.style.display = 'none'; }
+  function disableForm(form) { form.querySelectorAll('input,select,button').forEach(el => el.disabled = true); }
+  function enableForm(form) { form.querySelectorAll('input,select,button').forEach(el => el.disabled = false); }
+
+  function formatDatePretty(dateStr) {
+    if (!dateStr) return '-';
+    const d = new Date(dateStr);
+    if (isNaN(d)) return dateStr;
+    return d.toLocaleDateString(undefined, { year:'numeric', month:'long', day:'numeric' });
+  }
+
+  function monthsBetween(startDateStr, endDateStr) {
+    const d1 = new Date(startDateStr);
+    const d2 = new Date(endDateStr);
+    if (isNaN(d1) || isNaN(d2)) return 0;
+    let months = (d2.getFullYear() - d1.getFullYear()) * 12;
+    months += d2.getMonth() - d1.getMonth();
+    months += (d2.getDate() - d1.getDate()) / 30;
+    if (months < 0) return 0;
+    return months;
+  }
+
+  function monthsDiffCapped(startDateStr, endDateStr, maxMonths) {
+    const months = monthsBetween(startDateStr, endDateStr);
+    if (months < 0) return 0;
+    return Math.min(months, maxMonths);
+  }
+
+  // Area conversions for display
+  function getAllAreaVals() {
+    let flatSqft, flatSqm, commonSqft, commonSqm, totalSqft, totalSqm;
+    if (selectedUnit === 'sqft' || !selectedUnit) {
+      flatSqft = flatAreaValue;
+      commonSqft = commonAreaValue;
+      totalSqft = flatSqft + commonSqft;
+
+      flatSqm = flatSqft * SQFT_TO_SQM;
+      commonSqm = commonSqft * SQFT_TO_SQM;
+      totalSqm = totalSqft * SQFT_TO_SQM;
+    } else {
+      flatSqm = flatAreaValue;
+      commonSqm = commonAreaValue;
+      totalSqm = flatSqm + commonSqm;
+
+      flatSqft = flatSqm * SQM_TO_SQFT;
+      commonSqft = commonSqm * SQM_TO_SQFT;
+      totalSqft = totalSqm * SQM_TO_SQFT;
+    }
+    return {flatSqft, flatSqm, commonSqft, commonSqm, totalSqft, totalSqm};
+  }
+
+  // Pre-DA months per wing and offer mappings
+  const preDAMonthsRunwalPerWing = { A: 0, B: 0, C: 6, D: 9, E: 9 };
+  const preDAMonthsAjmeraPerWing = { A: 0, B: 0, C: 3, D: 9, E: 9 };
+  const preDAMonthsDostiPerWing = { A: 12, B: 12, C: 12, D: 12, E: 12 };
+
+
+ // Show Summary Table after MOFA area form submit
+  function showSummaryTable() {
+    message.innerText = '';
+    mofaMessage.innerText = '';
+    unitMessage.innerText = '';
+    mofaAreaMessage.innerText = '';
+    estimationMessage.innerText = '';
+    estimationResult.innerText = '';
+    finalMessage.innerText = '';
+    hideSection(wingSelectionSection);
+    hideSection(mofaQuestion);
+    hideSection(estimationSection);
+    hideSection(unitSelection);
+    hideSection(mofaInputSection);
+    hideSection(questionSection);
+    hideSection(allBasicInputsSection);
+    hideSection(eligibilitySection);
+    showSection(summarySection);
+
+    const {flatSqft, flatSqm, commonSqft, commonSqm, totalSqft, totalSqm} = getAllAreaVals();
+
+    summaryTableContainer.innerHTML = `
+      <h3 style="text-align: center; margin-bottom: 10px;">Basic Flat Data</h3>
+      <table>
+        <thead>
+          <tr><th>Item</th><th>Square Feet (sq.ft.)</th><th>Square Meters (sq.m.)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Wing</strong></td><td colspan="2" style="text-align:center;">${selectedWing || '-'}</td></tr>
+          <tr><td>Flat MOFA carpet area</td><td>${flatSqft.toFixed(2)}</td><td>${flatSqm.toFixed(2)}</td></tr>
+          <tr><td>Common MOFA carpet area</td><td>${commonSqft.toFixed(2)}</td><td>${commonSqm.toFixed(2)}</td></tr>
+          <tr><td><strong>Total MOFA carpet area</strong></td><td><strong>${totalSqft.toFixed(2)}</strong></td><td><strong>${totalSqm.toFixed(2)}</strong></td></tr>
+          <tr><td><strong>Date of DA</strong></td><td colspan="2" style="text-align:center;">${formatDatePretty(currentDateDA)}</td></tr>
+          <tr><td><strong>Date of IOD</strong></td><td colspan="2" style="text-align:center;">${formatDatePretty(currentDateIOD)}</td></tr>
+          <tr><td><strong>Date A and B wings vacate</strong></td><td colspan="2" style="text-align:center;">${formatDatePretty(currentDateABVacate)}</td></tr>
+        </tbody>
+      </table>`;
+
+    nextButton.style.display = 'block';
+    nextButtonFromQuestion.style.display = 'none';
+    submitDatesBtn.style.display = 'none';
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    changeDatesSelect.value = "";
+    selectionDisplay.textContent = "";
+    dateInputsDiv.style.display = 'none';
+  }
+
+  // Show All Basic Inputs Table with full info
+// Show All Basic Inputs Table with full info
+function showAllBasicInputsTable() {
+  const {flatSqft, flatSqm, commonSqft, commonSqm, totalSqft, totalSqm} = getAllAreaVals();
+
+  const hindCHSFlatMOFA = wingAreas.A.flatMOFA + wingAreas.B.flatMOFA + wingAreas.C.flatMOFA + wingAreas.D.flatMOFA + wingAreas.E.flatMOFA;
+  const hindCHSTotalMOFA = wingAreas.A.totalMOFA + wingAreas.B.totalMOFA + wingAreas.C.totalMOFA + wingAreas.D.totalMOFA + wingAreas.E.totalMOFA;
+
+  allBasicInputsTableContainer.innerHTML = `
+    <table>
+      <thead>
+        <tr><th>Input</th><th>Value</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Wing</strong></td><td style="text-align:center;">${selectedWing || '-'}</td></tr>
+        <tr><td>Flat MOFA carpet area</td><td>${flatSqft.toFixed(2)} sq.ft. / ${flatSqm.toFixed(2)} sq.m.</td></tr>
+        <tr><td>Common MOFA carpet area</td><td>${commonSqft.toFixed(2)} sq.ft. / ${commonSqm.toFixed(2)} sq.m.</td></tr>
+        <tr><td><strong>Total MOFA carpet area</strong></td><td><strong>${totalSqft.toFixed(2)} sq.ft. / ${totalSqm.toFixed(2)} sq.m.</strong></td></tr>
+        <tr><td><strong>Date of DA</strong></td><td>${formatDatePretty(currentDateDA)}</td></tr>
+        <tr><td><strong>Date of IOD</strong></td><td>${formatDatePretty(currentDateIOD)}</td></tr>
+        <tr><td><strong>Date A and B wings vacate</strong></td><td>${formatDatePretty(currentDateABVacate)}</td></tr>
+        <tr><td><strong>Date D and E wings vacated</strong></td><td>${formatDatePretty(dateDVacated)}</td></tr>
+        <tr><td><strong>Date C wing vacated</strong></td><td>${formatDatePretty(dateCVacated)}</td></tr>
+        <tr><td><strong>Hind CHS flat MOFA carpet area</strong></td><td>${hindCHSFlatMOFA.toLocaleString('en-IN', {minimumFractionDigits:2, maximumFractionDigits:2})} sq.ft.</td></tr>
+        <tr><td><strong>Hind CHS total MOFA carpet area (incl. common)</strong></td><td>${hindCHSTotalMOFA.toLocaleString('en-IN', {minimumFractionDigits:2, maximumFractionDigits:2})} sq.ft.</td></tr>
+        <tr><td><strong>Estimate price per sq.ft. on Launch</strong></td>
+            <td>${Number(launchPrice).toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})} Rs / sq.ft</td></tr>
+        <tr><td><strong>Estimate price per sq.ft. on Completion</strong></td>
+            <td>${Number(completionPrice).toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})} Rs / sq.ft</td></tr>
+      </tbody>
+    </table>`;
+  allBasicInputsSection.style.display = 'block';
+  compareButton.style.display = 'block';
+
+  // Update vacate dates for A & B wings dynamically
+  wingVacateDates.A = currentDateABVacate;
+  wingVacateDates.B = currentDateABVacate;
+}
+
+  // Validate numbers up to 2 decimals
+  function isValidDecimalNumber(numStr) {
+    return /^\d+(\.\d{1,2})?$/.test(numStr);
+  }
+
+ 
+  // Calculate eligibility rents for Runwal, Ajmera, Dosti pre-DA
+  function calculateEligibility(flatAreaSqFtInput) {
+    if (!selectedWing || !flatAreaSqFtInput || flatAreaSqFtInput === 0) {
+      alert("Wing and Flat MOFA carpet area must be entered to calculate eligibility.");
+      return null;
+    }
+    const RATE_RUNWAL = 80;
+    const RATE_AJMERA = 80;
+    const RATE_DOSTI = 70;
+
+    let runwalMonths = 0;
+    let ajmeraMonths = 0;
+    let dostiMonths = 12;
+
+    if (selectedWing === 'C') {
+      runwalMonths = 6;
+      ajmeraMonths = 3;
+    } else if (selectedWing === 'D' || selectedWing === 'E') {
+      runwalMonths = 9;
+      ajmeraMonths = 9;
+    }
+
+    const runwalRent = RATE_RUNWAL * flatAreaSqFtInput * runwalMonths;
+    const ajmeraRent = RATE_AJMERA * flatAreaSqFtInput * ajmeraMonths;
+    const dostiRent = RATE_DOSTI * flatAreaSqFtInput * dostiMonths;
+
+    return { runwalMonths, runwalRent, ajmeraMonths, ajmeraRent, dostiMonths, dostiRent };
+  }
+
+  // DA to IOD rent for user-selected wing
+ function calculateDAtoIODRentForUser(flatAreaSqFtInput) {
+  if (!selectedWing || !flatAreaSqFtInput || flatAreaSqFtInput === 0) {
+    alert("Wing and Flat MOFA carpet area must be entered to calculate DA to IOD rent.");
+    return { runwal: 0, ajmera: 0 };
+  }
+
+  let daToIODMonths = 0;
+  const MAX_MONTHS = MAX_MONTHS_DA_TO_IOD;
+
+  if (selectedWing === 'C' || selectedWing === 'D' || selectedWing === 'E') {
+    daToIODMonths = monthsDiffCapped(currentDateDA, currentDateIOD, MAX_MONTHS);
+  } else if (selectedWing === 'A' || selectedWing === 'B') {
+    const vacateDate = wingVacateDates[selectedWing];
+    if (new Date(vacateDate) < new Date(currentDateIOD)) {
+      if (new Date(vacateDate) < new Date(currentDateDA)) {
+        // Vacated before DA: Only DA to IOD months
+        daToIODMonths = monthsDiffCapped(currentDateDA, currentDateIOD, MAX_MONTHS);
+      } else {
+        // Vacated after DA: vacateDate to IOD months
+        daToIODMonths = monthsDiffCapped(vacateDate, currentDateIOD, MAX_MONTHS);
+      }
+    }
+  }
+
+  const runwalRent = RATE_RUNWAL_DA_IOD * flatAreaSqFtInput * daToIODMonths;
+  const ajmeraRent = 0;
+
+  return { runwal: runwalRent, ajmera: ajmeraRent };
+}
+
+
+
+  // Hind CHS Pre-DA rent
+  function calculateHindCHSEligibility() {
+    let runwalRentSum = 0, ajmeraRentSum = 0, dostiRentSum = 0;
+    for (const wing in wingAreas) {
+      if (!wingAreas.hasOwnProperty(wing)) continue;
+      const flatArea = wingAreas[wing].flatMOFA;
+      runwalRentSum += RATE_RUNWAL * flatArea * (preDAMonthsRunwalPerWing[wing] || 0);
+      ajmeraRentSum += RATE_AJMERA * flatArea * (preDAMonthsAjmeraPerWing[wing] || 0);
+      dostiRentSum += RATE_DOSTI * flatArea * (preDAMonthsDostiPerWing[wing] || 0);
+    }
+    return { runwalRent: runwalRentSum, ajmeraRent: ajmeraRentSum, dostiRent: dostiRentSum };
+  }
+
+  // Hind CHS DA to IOD rent
+function calculateDAtoIODRentForHindCHS() {
+  let runwalRentSum = 0;
+  const MAX_MONTHS = MAX_MONTHS_DA_TO_IOD;
+  for (const wing in wingAreas) {
+    if (!wingAreas.hasOwnProperty(wing)) continue;
+    let months = 0;
+    if (wing === 'C' || wing === 'D' || wing === 'E') {
+      // For C/D/E: DA to IOD period (capped at 8 months)
+      months = monthsDiffCapped(currentDateDA, currentDateIOD, MAX_MONTHS);
+    } else if (wing === 'A' || wing === 'B') {
+      // For A/B: Only DA to IOD if vacate date is before DA; otherwise vacate date to IOD if after DA, capped at 8 months
+      const vacateDate = wingVacateDates[wing];
+      if (new Date(vacateDate) < new Date(currentDateIOD)) {
+        if (new Date(vacateDate) < new Date(currentDateDA)) {
+          // Vacated before DA: Only DA to IOD period
+          months = monthsDiffCapped(currentDateDA, currentDateIOD, MAX_MONTHS);
+        } else {
+          // Vacated after DA: vacateDate to IOD
+          months = monthsDiffCapped(vacateDate, currentDateIOD, MAX_MONTHS);
+        }
+      }
+    }
+    const flatArea = wingAreas[wing].flatMOFA;
+    runwalRentSum += RATE_RUNWAL_DA_IOD * flatArea * months;
+  }
+  return { runwalRent: runwalRentSum, ajmeraRent: 0 };
+}
+
+  // Proportional Dosti compensation based on flat MOFA area and vacancy duration
+  function calculateProportionalDostiCompensation(userFlatCarpetAreaSqFt, userVacateDateStr, allWingAreas, allWingVacateDates) {
+    const MS_PER_DAY = 24 * 60 * 60 * 1000;
+    const currentIODDate = new Date(currentDateIOD);
+    const DOSTI_RATE = 70;
+    const REIMBURSE_MONTHS = 12;
+
+    const groups = {};
+    let totalWeighting = 0;
+    let totalCumulativeRent = 0;
+
+    for (const wing in allWingAreas) {
+      if (!allWingAreas.hasOwnProperty(wing)) continue;
+      const wingArea = allWingAreas[wing].flatMOFA;
+      const vacateDateStr = allWingVacateDates[wing];
+      const vacateDate = new Date(vacateDateStr);
+
+      let vacantDays = 0;
+      if (vacateDate < currentIODDate) {
+        vacantDays = Math.floor((currentIODDate - vacateDate) / MS_PER_DAY);
+      }
+
+      const weighting = wingArea * vacantDays;
+      totalWeighting += weighting;
+      totalCumulativeRent += DOSTI_RATE * REIMBURSE_MONTHS * wingArea;
+
+      if (groups[vacateDateStr]) {
+        groups[vacateDateStr].totalAreaDays += weighting;
+        groups[vacateDateStr].totalCarpetArea += wingArea;
+      } else {
+        groups[vacateDateStr] = { totalAreaDays: weighting, totalCarpetArea: wingArea };
+      }
+    }
+
+    if (totalWeighting === 0) {
+      return DOSTI_RATE * REIMBURSE_MONTHS * userFlatCarpetAreaSqFt;
+    }
+
+    const userGroup = groups[userVacateDateStr];
+    if (!userGroup || userGroup.totalCarpetArea === 0) {
+      return DOSTI_RATE * REIMBURSE_MONTHS * userFlatCarpetAreaSqFt;
+    }
+
+    const groupCompensationPool = totalCumulativeRent * (userGroup.totalAreaDays / totalWeighting);
+    const perSqFtCompensation = groupCompensationPool / userGroup.totalCarpetArea;
+
+    return perSqFtCompensation * userFlatCarpetAreaSqFt;
+  }
+
+
+
+  // Event handlers and user interactions (unchanged)
+
+  document.getElementById('wingForm').onsubmit = function(e) {
+    e.preventDefault();
+    selectedWing = document.getElementById('wingSelect').value;
+    if (['A','B','C','D','E'].includes(selectedWing)) {
+      message.style.color = 'green';
+      message.innerText = `You selected Wing ${selectedWing}.`;
+      disableForm(this);
+      enableForm(document.getElementById('knowledgeForm'));
+      showSection(mofaQuestion);
+      hideSection(unitSelection);
+      hideSection(mofaInputSection);
+      hideSection(estimationSection);
+      hideSection(summarySection);
+      hideSection(questionSection);
+      allBasicInputsSection.style.display = 'none';
+      eligibilitySection.style.display = 'none';
+      finalMessage.innerText = '';
+    } else {
+      message.style.color = 'red';
+      message.innerText = 'Please select a valid wing from the dropdown.';
+    }
+  };
+
+  document.getElementById('knowledgeForm').onsubmit = function(e) {
+    e.preventDefault();
+    knowsMofa = null;
+    const radios = document.getElementsByName('knowsMofa');
+    for(const radio of radios) if(radio.checked) knowsMofa = radio.value;
+
+    if (knowsMofa === 'yes') {
+      mofaMessage.innerText = '';
+      disableForm(this);
+      showSection(unitSelection);
+      hideSection(estimationSection);
+      hideSection(mofaInputSection);
+      hideSection(summarySection);
+      hideSection(questionSection);
+      allBasicInputsSection.style.display = 'none';
+      eligibilitySection.style.display = 'none';
+      finalMessage.innerText = '';
+    } else if (knowsMofa === 'no') {
+      mofaMessage.innerText = '';
+      disableForm(this);
+      showSection(estimationSection);
+      hideSection(unitSelection);
+      hideSection(mofaInputSection);
+      hideSection(summarySection);
+      hideSection(questionSection);
+      allBasicInputsSection.style.display = 'none';
+      eligibilitySection.style.display = 'none';
+      finalMessage.innerText = '';
+    } else {
+      mofaMessage.style.color = 'red';
+      mofaMessage.innerText = 'Please select Yes or No.';
+    }
+  };
+
+ estimationForm.onsubmit = function(e){
+  e.preventDefault();
+  estimationMessage.innerText = '';
+  estimationResult.innerText = '';
+  const maintenanceAreaStr = document.getElementById('maintenanceArea').value.trim();
+  const maintenanceArea = Number(maintenanceAreaStr);
+
+  if (!maintenanceAreaStr || isNaN(maintenanceArea) || maintenanceArea <= 0) {
+    estimationMessage.style.color = 'red';
+    estimationMessage.innerText = 'Please enter a valid positive number for the maintenance bill area.';
+    return;
+  }
+
+  flatAreaValue = maintenanceArea * 0.88;
+  commonAreaValue = maintenanceArea * 0.071;
+
+  estimationResult.style.color = 'green';
+  estimationResult.innerHTML = `
+    Estimated Flat Carpet Area: <strong>${flatAreaValue.toFixed(2)} sq.ft.</strong>, 
+    Estimated Common Carpet Area: <strong>${commonAreaValue.toFixed(2)} sq.ft.</strong>, 
+    <br><strong>Total MOFA Area for your flat:</strong> ${(flatAreaValue+commonAreaValue).toFixed(2)} sq.ft.<br>
+    (These are rough estimates. The actual carpet areas may vary.)
+  `;
+
+  disableForm(estimationForm);
+
+  selectedUnit = 'sqft';
+
+  // Show price estimate section instead of summary
+  // hideSection(estimationSection);
+  showSection(priceEstimateSection);
+  priceEstimateMessage.innerText = '';
+  enableForm(priceEstimateForm);
+};
+
+  unitForm.onsubmit = function(e) {
+    e.preventDefault();
+    selectedUnit = null;
+    const radios = document.getElementsByName('unit');
+    for(const radio of radios) if(radio.checked) selectedUnit = radio.value;
+
+    if (selectedUnit === 'sqft' || selectedUnit === 'sqm') {
+      unitMessage.innerText = '';
+      disableForm(this);
+      unitLabel.innerText = (selectedUnit === 'sqft') ? 'sq.ft.' : 'sq.m.';
+      flatAreaInput.value = '';
+      commonAreaInput.value = '';
+      mofaAreaMessage.innerText = '';
+
+      showSection(mofaInputSection);
+      hideSection(summarySection);
+      hideSection(questionSection);
+      allBasicInputsSection.style.display = 'none';
+      eligibilitySection.style.display = 'none';
+      finalMessage.innerText = '';
+    } else {
+      unitMessage.style.color = 'red';
+      unitMessage.innerText = 'Please select a unit.';
+    }
+  };
+
+
+
+  mofaForm.onsubmit = function(e) {
+    e.preventDefault();
+
+    const flatValStr = flatAreaInput.value.trim();
+    const commonValStr = commonAreaInput.value.trim();
+
+    const flatVal = Number(flatValStr);
+    const commonVal = Number(commonValStr);
+
+    if (
+      flatValStr === '' || commonValStr === '' ||
+      isNaN(flatVal) || isNaN(commonVal) ||
+      flatVal < 0 || commonVal < 0 ||
+      !isValidDecimalNumber(flatValStr) || !isValidDecimalNumber(commonValStr)
+    ) {
+      mofaAreaMessage.style.color = 'red';
+      mofaAreaMessage.innerText = 'Please enter valid non-negative numbers up to 2 decimal places for both areas.';
+      return;
+    }
+
+    mofaAreaMessage.innerText = '';
+    flatAreaValue = flatVal;
+    commonAreaValue = commonVal;
+
+    disableForm(mofaForm);
+
+    finalMessage.style.color = 'green';
+    finalMessage.innerText = `Thank you! You selected Wing ${selectedWing}.`;
+
+    // Show price estimate section instead of summary
+   // hideSection(mofaInputSection);
+    showSection(priceEstimateSection);
+    priceEstimateMessage.innerText = '';
+    enableForm(priceEstimateForm);
+  };
+
+  priceEstimateForm.onsubmit = function(e) {
+    e.preventDefault();
+
+    const launchVal = Number(document.getElementById('launchPrice').value);
+    const completionVal = Number(document.getElementById('completionPrice').value);
+
+    if (
+      isNaN(launchVal) || isNaN(completionVal) ||
+      launchVal < 25000 || launchVal > 60000 ||
+      completionVal < 25000 || completionVal > 60000
+    ) {
+      priceEstimateMessage.style.color = 'red';
+      priceEstimateMessage.innerText = "Please enter prices between 25,000 and 60,000 for both values.";
+      return;
+    }
+
+    launchPrice = launchVal;
+    completionPrice = completionVal;
+
+    priceEstimateMessage.innerText = '';
+    disableForm(priceEstimateForm);
+
+    // Now continue to summary table as before
+    hideSection(priceEstimateSection);
+    showSummaryTable();
+  };
+
+  document.getElementById('backToWing').onclick = function() {
+    hideSection(mofaQuestion);
+    showSection(wingSelectionSection);
+    enableForm(wingForm);
+    message.innerText = '';
+    mofaMessage.innerText = '';
+    finalMessage.innerText = '';
+    hideSection(unitSelection);
+    hideSection(mofaInputSection);
+    hideSection(estimationSection);
+    hideSection(summarySection);
+    hideSection(questionSection);
+    allBasicInputsSection.style.display = 'none';
+    eligibilitySection.style.display = 'none';
+  };
+
+  document.getElementById('backToKnowledgeFromEstimate').onclick = function() {
+    hideSection(estimationSection);
+    showSection(mofaQuestion);
+    enableForm(knowledgeForm);
+    estimationMessage.innerText = '';
+    estimationResult.innerText = '';
+    finalMessage.innerText = '';
+    hideSection(summarySection);
+    hideSection(questionSection);
+    allBasicInputsSection.style.display = 'none';
+    eligibilitySection.style.display = 'none';
+  };
+
+  document.getElementById('backToKnowledgeFromUnit').onclick = function() {
+    hideSection(unitSelection);
+    showSection(mofaQuestion);
+    enableForm(knowledgeForm);
+    unitMessage.innerText = '';
+    finalMessage.innerText = '';
+    hideSection(mofaInputSection);
+    hideSection(summarySection);
+    hideSection(questionSection);
+    allBasicInputsSection.style.display = 'none';
+    eligibilitySection.style.display = 'none';
+  };
+
+  document.getElementById('backToUnit').onclick = function() {
+    hideSection(mofaInputSection);
+    showSection(unitSelection);
+    enableForm(unitForm);
+    mofaAreaMessage.innerText = '';
+    finalMessage.innerText = '';
+    hideSection(summarySection);
+    hideSection(questionSection);
+    allBasicInputsSection.style.display = 'none';
+    eligibilitySection.style.display = 'none';
+  };
+
+  nextButton.addEventListener('click', () => {
+    hideSection(summarySection);
+    showSection(questionSection);
+
+    changeDatesSelect.value = "";
+    selectionDisplay.textContent = "";
+    dateInputsDiv.style.display = 'none';
+    submitDatesBtn.style.display = 'none';
+    nextButtonFromQuestion.style.display = 'none';
+    allBasicInputsSection.style.display = 'none';
+    eligibilitySection.style.display = 'none';
+  });
+
+  backToSummaryBtn.addEventListener('click', () => {
+    hideSection(questionSection);
+    showSection(summarySection);
+    allBasicInputsSection.style.display = 'none';
+    eligibilitySection.style.display = 'none';
+  });
+
+  changeDatesSelect.addEventListener('change', () => {
+    selectionDisplay.textContent = "";
+    allBasicInputsSection.style.display = 'none';
+    eligibilitySection.style.display = 'none';
+
+    if (changeDatesSelect.value === "Yes") {
+      dateInputsDiv.style.display = 'block';
+      submitDatesBtn.style.display = 'inline-block';
+      nextButtonFromQuestion.style.display = 'none';
+
+      dateDAUpdate.value = currentDateDA;
+      dateIODUpdate.value = currentDateIOD;
+      dateABVacateUpdate.value = currentDateABVacate;
+    } else if (changeDatesSelect.value === "No") {
+      dateInputsDiv.style.display = 'none';
+      submitDatesBtn.style.display = 'none';
+      nextButtonFromQuestion.style.display = 'inline-block';
+      selectionDisplay.textContent = "You selected: No";
+      hideSection(wingSelectionSection);
+      hideSection(mofaQuestion);
+      hideSection(estimationSection);
+      hideSection(unitSelection);
+      hideSection(mofaInputSection);
+      hideSection(summarySection);
+      hideSection(questionSection);
+
+      showAllBasicInputsTable();
+    } else {
+      dateInputsDiv.style.display = 'none';
+      submitDatesBtn.style.display = 'none';
+      nextButtonFromQuestion.style.display = 'none';
+      selectionDisplay.textContent = "";
+      allBasicInputsSection.style.display = 'none';
+      eligibilitySection.style.display = 'none';
+    }
+  });
+
+  submitDatesBtn.addEventListener('click', () => {
+    if (!dateDAUpdate.value || !dateIODUpdate.value || !dateABVacateUpdate.value) {
+      alert("Please fill in all three dates.");
+      return;
+    }
+    currentDateDA = dateDAUpdate.value;
+    currentDateIOD = dateIODUpdate.value;
+    currentDateABVacate = dateABVacateUpdate.value;
+
+    wingVacateDates.A = currentDateABVacate;
+    wingVacateDates.B = currentDateABVacate;
+
+    selectionDisplay.textContent = "Dates updated successfully.";
+
+    dateInputsDiv.style.display = 'none';
+    submitDatesBtn.style.display = 'none';
+    nextButtonFromQuestion.style.display = 'inline-block';
+
+    hideSection(summarySection);
+    hideSection(questionSection);
+    hideSection(wingSelectionSection);
+    hideSection(mofaQuestion);
+    hideSection(estimationSection);
+    hideSection(unitSelection);
+    hideSection(mofaInputSection);
+
+    showAllBasicInputsTable();
+  });
+
+  nextButtonFromQuestion.addEventListener('click', () => {
+    alert("Next step triggered! Implement further workflow here.");
+  });
+
+  // Compare button: all calculations and render eligibility tables
+ compareButton.onclick = function() {
+  // Convert user input areas to sq.ft. if entered in sqm
+  let flatAreaSqFtUsr = flatAreaValue || 0;
+  let commonAreaSqFtUsr = commonAreaValue || 0;
+
+  if (selectedUnit === 'sqm') {
+    flatAreaSqFtUsr = flatAreaValue * SQM_TO_SQFT;
+    commonAreaSqFtUsr = commonAreaValue * SQM_TO_SQFT;
+  }
+
+  const userFlatCarpetAreaSqFt = flatAreaSqFtUsr;
+  const userCommonCarpetAreaSqFt = commonAreaSqFtUsr;
+  const totalMOFAUserSqFt = userFlatCarpetAreaSqFt + userCommonCarpetAreaSqFt;
+
+  // Calculate eligibility rents (Pre-DA) with flat area in sq.ft.
+  const eligibility = calculateEligibility(userFlatCarpetAreaSqFt);
+  if (!eligibility) return;
+
+  const { runwalRent, ajmeraRent } = eligibility;
+  // DA to IOD rent for user with flat area in sq.ft.
+  const daToIODUser = calculateDAtoIODRentForUser(userFlatCarpetAreaSqFt);
+
+  // User wing's vacate date
+  const userVacateDateStr = wingVacateDates[selectedWing];
+
+  // Proportional Dosti compensation
+  const proportionalDostiCompensation = calculateProportionalDostiCompensation(
+    userFlatCarpetAreaSqFt, 
+    userVacateDateStr,
+    wingAreas,
+    wingVacateDates
+  );
+
+  // Monthly rent rates for 12-month periods (per month per sq.ft.)
+  const RATE_AJMERA_12MONTHS = 80;
+  const RATE_RUNWAL_12MONTHS = 85;
+  const RATE_DOSTI_12MONTHS = 85;
+
+  const RATE_AJMERA_13_24 = 84;
+  const RATE_RUNWAL_13_24 = 91;
+  const RATE_DOSTI_13_24 = 90;
+
+  const RATE_AJMERA_25_36 = 88;
+  const RATE_RUNWAL_25_36 = 97;
+  const RATE_DOSTI_25_36 = 95;
+
+  const RATE_AJMERA_37_42 = 93;
+  const RATE_RUNWAL_37_42 = 104;
+  const RATE_DOSTI_37_42 = 100;
+
+  // Calculate 12-month rents after DA (user)
+  const ajmera12MonthRentUser = RATE_AJMERA_12MONTHS * userFlatCarpetAreaSqFt * 12;
+  const runwal12MonthRentUser = RATE_RUNWAL_12MONTHS * userFlatCarpetAreaSqFt * 12;
+  const dosti12MonthRentUser = RATE_DOSTI_12MONTHS * userFlatCarpetAreaSqFt * 12;
+
+  // Calculate 13-24 months rents after DA (user)
+  const ajmera13_24MonthRentUser = RATE_AJMERA_13_24 * userFlatCarpetAreaSqFt * 12;
+  const runwal13_24MonthRentUser = RATE_RUNWAL_13_24 * userFlatCarpetAreaSqFt * 12;
+  const dosti13_24MonthRentUser = RATE_DOSTI_13_24 * userFlatCarpetAreaSqFt * 12;
+
+  // Calculate 25-36 months rents after DA (user)
+  const ajmera25_36MonthRentUser = RATE_AJMERA_25_36 * userFlatCarpetAreaSqFt * 12;
+  const runwal25_36MonthRentUser = RATE_RUNWAL_25_36 * userFlatCarpetAreaSqFt * 12;
+  const dosti25_36MonthRentUser = RATE_DOSTI_25_36 * userFlatCarpetAreaSqFt * 12;
+
+  // Calculate 37-42 months rents after DA (user)
+  const ajmera37_42MonthRentUser = RATE_AJMERA_37_42 * userFlatCarpetAreaSqFt * 6;
+  const runwal37_42MonthRentUser = RATE_RUNWAL_37_42 * userFlatCarpetAreaSqFt * 6;
+  const dosti37_42MonthRentUser = RATE_DOSTI_37_42 * userFlatCarpetAreaSqFt * 6;
+
+const hindCHS = calculateHindCHSEligibility();
+    const daToIODHindCHS = calculateDAtoIODRentForHindCHS();
+
+    const backDatedHindCHSRunwal = hindCHS.runwalRent + daToIODHindCHS.runwalRent;
+    const backDatedHindCHSAjmera = hindCHS.ajmeraRent + daToIODHindCHS.ajmeraRent;
+    const backDatedHindCHSDosti = hindCHS.dostiRent; // pre-DA only
+
+
+  // Hind CHS flat MOFA total (sum of all wings)
+  const hindCHSFlatMOFA = wingAreas.A.flatMOFA + wingAreas.B.flatMOFA + wingAreas.C.flatMOFA + wingAreas.D.flatMOFA + wingAreas.E.flatMOFA;
+  // Hind CHS total MOFA carpet area (for Proposed Area)
+  const hindCHSTotalMOFA = wingAreas.A.totalMOFA + wingAreas.B.totalMOFA + wingAreas.C.totalMOFA + wingAreas.D.totalMOFA + wingAreas.E.totalMOFA;
+
+  // Proposed Area for Hind CHS
+  const proposedAreaHindCHS = {
+    Dosti: hindCHSTotalMOFA * 1.65,
+    Ajmera: hindCHSTotalMOFA * 1.54,
+    Runwal: hindCHSTotalMOFA * 1.575,
+  };
+
+  // Hind CHS 12-month rents after DA
+  const ajmera12MonthRentHindCHS = RATE_AJMERA_12MONTHS * hindCHSFlatMOFA * 12;
+  const runwal12MonthRentHindCHS = RATE_RUNWAL_12MONTHS * hindCHSFlatMOFA * 12;
+  const dosti12MonthRentHindCHS = RATE_DOSTI_12MONTHS * hindCHSFlatMOFA * 12;
+
+  // Hind CHS 13-24 months rents after DA
+  const ajmera13_24MonthRentHindCHS = RATE_AJMERA_13_24 * hindCHSFlatMOFA * 12;
+  const runwal13_24MonthRentHindCHS = RATE_RUNWAL_13_24 * hindCHSFlatMOFA * 12;
+  const dosti13_24MonthRentHindCHS = RATE_DOSTI_13_24 * hindCHSFlatMOFA * 12;
+
+  // Hind CHS 25-36 months rents after DA
+  const ajmera25_36MonthRentHindCHS = RATE_AJMERA_25_36 * hindCHSFlatMOFA * 12;
+  const runwal25_36MonthRentHindCHS = RATE_RUNWAL_25_36 * hindCHSFlatMOFA * 12;
+  const dosti25_36MonthRentHindCHS = RATE_DOSTI_25_36 * hindCHSFlatMOFA * 12;
+
+  // Hind CHS 37-42 months rents after DA
+  const ajmera37_42MonthRentHindCHS = RATE_AJMERA_37_42 * hindCHSFlatMOFA * 6;
+  const runwal37_42MonthRentHindCHS = RATE_RUNWAL_37_42 * hindCHSFlatMOFA * 6;
+  const dosti37_42MonthRentHindCHS = RATE_DOSTI_37_42 * hindCHSFlatMOFA * 6;
+
+
+// Calculate totals for Your eligibility table (user)
+const totalRunwalUser = (runwalRent + daToIODUser.runwal) + runwal12MonthRentUser + runwal13_24MonthRentUser + runwal25_36MonthRentUser + runwal37_42MonthRentUser;
+const totalAjmeraUser = (ajmeraRent + daToIODUser.ajmera) + ajmera12MonthRentUser + ajmera13_24MonthRentUser + ajmera25_36MonthRentUser + ajmera37_42MonthRentUser;
+const totalDostiUser = proportionalDostiCompensation + dosti12MonthRentUser + dosti13_24MonthRentUser + dosti25_36MonthRentUser + dosti37_42MonthRentUser;
+
+// Calculate totals for Hind CHS eligibility table
+const totalRunwalHindCHS = backDatedHindCHSRunwal + runwal12MonthRentHindCHS + runwal13_24MonthRentHindCHS + runwal25_36MonthRentHindCHS + runwal37_42MonthRentHindCHS;
+const totalAjmeraHindCHS = backDatedHindCHSAjmera + ajmera12MonthRentHindCHS + ajmera13_24MonthRentHindCHS + ajmera25_36MonthRentHindCHS + ajmera37_42MonthRentHindCHS;
+const totalDostiHindCHS = backDatedHindCHSDosti + dosti12MonthRentHindCHS + dosti13_24MonthRentHindCHS + dosti25_36MonthRentHindCHS + dosti37_42MonthRentHindCHS;
+
+// Corpus for user (Flat MOFA in sq.ft.)
+const corpusAjmeraUser = 900 * userFlatCarpetAreaSqFt;
+const corpusRunwalUser = 1000 * userFlatCarpetAreaSqFt;
+const corpusDostiUser = 50000; // flat per flat
+
+// Corpus for Hind CHS (total flat MOFA area)
+const corpusAjmeraHindCHS = 900 * hindCHSFlatMOFA;
+const corpusRunwalHindCHS = 1000 * hindCHSFlatMOFA;
+const corpusDostiHindCHS = 50000 * 256;
+
+// Shifting charges for user (per flat)
+const shiftingRunwalUser = 50000;
+const shiftingAjmeraUser = 60000;
+const shiftingDostiUser = 50000;
+
+// Shifting charges for Hind CHS (256 flats)
+const shiftingRunwalHindCHS = 50000 * 256;
+const shiftingAjmeraHindCHS = 60000 * 256;
+const shiftingDostiHindCHS = 50000 * 256;
+
+// Brokerage for user
+const brokerageAjmeraUser = 80 * userFlatCarpetAreaSqFt; 
+const brokerageRunwalUser = 85 * userFlatCarpetAreaSqFt;
+const brokerageDostiUser = 110 * userFlatCarpetAreaSqFt;
+
+// Brokerage for Hind CHS (total flat MOFA area)
+const brokerageAjmeraHindCHS = 80 * hindCHSFlatMOFA;
+const brokerageRunwalHindCHS = 85 * hindCHSFlatMOFA;
+const brokerageDostiHindCHS = 110 * hindCHSFlatMOFA;
+
+// Calculate Total Cash Compensation for Your eligibility (user)
+const totalCashRunwalUser = totalRunwalUser + corpusRunwalUser + shiftingRunwalUser + brokerageRunwalUser;
+const totalCashAjmeraUser = totalAjmeraUser + corpusAjmeraUser + shiftingAjmeraUser + brokerageAjmeraUser;
+const totalCashDostiUser = totalDostiUser + corpusDostiUser + shiftingDostiUser + brokerageDostiUser;
+
+// Calculate Total Cash Compensation for Hind CHS eligibility
+const totalCashRunwalHindCHS = totalRunwalHindCHS + corpusRunwalHindCHS + shiftingRunwalHindCHS + brokerageRunwalHindCHS;
+const totalCashAjmeraHindCHS = totalAjmeraHindCHS + corpusAjmeraHindCHS + shiftingAjmeraHindCHS + brokerageAjmeraHindCHS;
+const totalCashDostiHindCHS = totalDostiHindCHS + corpusDostiHindCHS + shiftingDostiHindCHS + brokerageDostiHindCHS;
+
+
+
+  // Build Your Eligibility table HTML
+  eligibilityTableContainer.innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th></th>
+          <th>Dosti</th>
+          <th>Ajmera</th>
+          <th>Runwal</th>
+        </tr>
+      </thead>
+      <tbody>
+    	<tr class="pastel-green-row">
+
+          <td><strong>Proposed Area (sq.ft.)</strong></td>
+          <td style="text-align:right;">${(totalMOFAUserSqFt * 1.65).toLocaleString('en-IN', {minimumFractionDigits:2, maximumFractionDigits:2})}
+          
+          <td style="text-align:right;">${(totalMOFAUserSqFt * 1.54).toLocaleString('en-IN', {minimumFractionDigits:2, maximumFractionDigits:2})}
+          <td style="text-align:right;">${(totalMOFAUserSqFt * 1.575).toLocaleString('en-IN', {minimumFractionDigits:2, maximumFractionDigits:2})}
+        </tr>
+        <tr>
+          <td>Pre-DA Rent Amount (Rs)</td>
+          <td style="text-align:center;">&ndash;</td>
+          <td style="text-align:right;">${ajmeraRent.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+          <td style="text-align:right;">${runwalRent.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+        </tr>
+        <tr>
+          <td>DA to IOD Rent Amount (Rs)</td>
+          <td style="text-align:center;">&ndash;</td>
+        	<td style="text-align:right;">${daToIODUser.ajmera.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+          <td style="text-align:right;">${daToIODUser.runwal.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+        </tr>
+
+            	<tr class="pastel-blue-row">
+          <td><strong>Cumulative Back Dated Rent Amount (Rs)</strong></td>
+          <td style="text-align:right;">${proportionalDostiCompensation.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+          
+          <td style="text-align:right;">${(ajmeraRent + daToIODUser.ajmera).toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+          <td style="text-align:right;">${(runwalRent + daToIODUser.runwal).toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+        </tr>
+        <tr>
+  <td>12 Months Rent After IOD (Rs)</td>
+  <td style="text-align:right;">
+    ${dosti12MonthRentUser.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}<br>
+    <span style="font-size:0.95em;color:#666;">
+      (${(dosti12MonthRentUser/12).toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})} /month)
+    </span>
+  </td>
+  <td style="text-align:right;">
+    ${ajmera12MonthRentUser.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}<br>
+    <span style="font-size:0.95em;color:#666;">
+      (${(ajmera12MonthRentUser/12).toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})} /month)
+    </span>
+  </td>
+  <td style="text-align:right;">
+    ${runwal12MonthRentUser.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}<br>
+    <span style="font-size:0.95em;color:#666;">
+      (${(runwal12MonthRentUser/12).toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})} /month)
+    </span>
+  </td>
+</tr>        
+
+
+<tr>
+  <td>13 - 24 Months Rent After IOD (Rs)</td>
+  <td style="text-align:right;">
+    ${dosti13_24MonthRentUser.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}<br>
+    <span style="font-size:0.95em;color:#666;">
+      (${(dosti13_24MonthRentUser/12).toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})} /month)
+    </span>
+  </td>
+  <td style="text-align:right;">
+    ${ajmera13_24MonthRentUser.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}<br>
+    <span style="font-size:0.95em;color:#666;">
+      (${(ajmera13_24MonthRentUser/12).toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})} /month)
+    </span>
+  </td>
+  <td style="text-align:right;">
+    ${runwal13_24MonthRentUser.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}<br>
+    <span style="font-size:0.95em;color:#666;">
+      (${(runwal13_24MonthRentUser/12).toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})} /month)
+    </span>
+  </td>
+</tr>
+<tr>
+  <td>25 - 36 Months Rent After IOD (Rs)</td>
+  <td style="text-align:right;">
+    ${dosti25_36MonthRentUser.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}<br>
+    <span style="font-size:0.95em;color:#666;">
+      (${(dosti25_36MonthRentUser/12).toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})} /month)
+    </span>
+  </td>
+  <td style="text-align:right;">
+    ${ajmera25_36MonthRentUser.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}<br>
+    <span style="font-size:0.95em;color:#666;">
+      (${(ajmera25_36MonthRentUser/12).toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})} /month)
+    </span>
+  </td>
+  <td style="text-align:right;">
+    ${runwal25_36MonthRentUser.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}<br>
+    <span style="font-size:0.95em;color:#666;">
+      (${(runwal25_36MonthRentUser/12).toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})} /month)
+    </span>
+  </td>
+</tr>
+<tr>
+  <td>37 - 42 Months Rent After IOD (Rs)</td>
+  <td style="text-align:right;">
+    ${dosti37_42MonthRentUser.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}<br>
+    <span style="font-size:0.95em;color:#666;">
+      (${(dosti37_42MonthRentUser/6).toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})} /month)
+    </span>
+  </td>
+  <td style="text-align:right;">
+    ${ajmera37_42MonthRentUser.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}<br>
+    <span style="font-size:0.95em;color:#666;">
+      (${(ajmera37_42MonthRentUser/6).toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})} /month)
+    </span>
+  </td>
+  <td style="text-align:right;">
+    ${runwal37_42MonthRentUser.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}<br>
+    <span style="font-size:0.75em;color:#666;">
+      (${(runwal37_42MonthRentUser/6).toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})} /month)
+    </span>
+  </td>
+</tr>
+      <tr class="pastel-green-row">
+  <td><strong>Total Cash Compensation (Rs)</strong></td>
+<td style="text-align:right;">${totalCashDostiUser.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+  <td style="text-align:right;">${totalCashAjmeraUser.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+  
+  <td style="text-align:right;">${totalCashRunwalUser.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+  </tr>
+
+      <tr class="pastel-blue-row">
+
+  <td><strong>Value of additional area on completion (Rs)</strong></td>
+  <td style="text-align:right;">${((totalMOFAUserSqFt * 1.65 - totalMOFAUserSqFt) * completionPrice).toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td> 
+  <td style="text-align:right;">${((totalMOFAUserSqFt * 1.54 - totalMOFAUserSqFt) * completionPrice).toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+
+   <td style="text-align:right;">${((totalMOFAUserSqFt * 1.575 - totalMOFAUserSqFt) * completionPrice).toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+</tr>
+
+      <tr class="pastel-green-row">
+        <td><strong>New flat value on completion (Rs)</strong></td>
+   <td style="text-align:right;">${((totalMOFAUserSqFt * 1.65) * completionPrice).toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+        <td style="text-align:right;">${((totalMOFAUserSqFt * 1.54) * completionPrice).toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+        
+        <td style="text-align:right;">${((totalMOFAUserSqFt * 1.575) * completionPrice).toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+           </tr>
+
+      </tbody>
+    </table>
+  `;
+
+
+// Place this after eligibilityTableContainer.innerHTML (i.e., after "Your eligibility" table, inside compareButton.onclick)
+
+// --- Calculate all values needed ---
+const proposedAreaRunwal = totalMOFAUserSqFt * 1.575;
+const proposedAreaAjmera = totalMOFAUserSqFt * 1.54;
+const proposedAreaDosti = totalMOFAUserSqFt * 1.65;
+
+const additionalAreaRunwal = proposedAreaRunwal - totalMOFAUserSqFt;
+const additionalAreaAjmera = proposedAreaAjmera - totalMOFAUserSqFt;
+const additionalAreaDosti = proposedAreaDosti - totalMOFAUserSqFt;
+
+// Row 2: GST at 5% of additional area
+const gst5AdditionalDosti = (launchPrice * additionalAreaDosti) * 0.05;
+const gst5AdditionalAjmera = 0;
+const gst5AdditionalRunwal = 0;
+
+// Row 3: GST at 5% of full new area
+const gst5FullDosti = (launchPrice * proposedAreaDosti) * 0.05;
+const gst5FullAjmera = 0;
+const gst5FullRunwal = 0;
+
+// Row 4: GST at 5% of construction cost
+const gst18ConstructionDosti = (proposedAreaDosti * 6000) * 0.05;
+const gst18ConstructionAjmera = 0;
+const gst18ConstructionRunwal = 0;
+
+// --- Build Table HTML ---
+const yourLiabilitiesTableHTML = `
+  <h3 style="text-align:center; margin-top:30px;">Your Potential Liabilities</h3>
+
+  <div style="font-size:15px; margin:28px 0 8px 0; padding:8px 12px; background:#eef6ff; border-radius:6px; border:1px solid #dde6ef;">
+  <strong>Note:</strong> GST is calculated using the per square foot price at <strong>Launch rate</strong> 
+  (<span id="launchRateInfoInline">₹35,000/sq.ft</span>), and construction cost is assumed to be <strong>₹6,000/sq.ft.</strong> <br> It could be one of the four possibilities below.
+</div>
+
+  <table>
+    <thead>
+      <tr>
+        <th></th>
+        <th>Dosti</th>
+        <th>Ajmera</th>
+        <th>Runwal</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>GST at 0%</td>
+        <td style="text-align:right;">0</td>
+        <td style="text-align:right;">0</td>
+        <td style="text-align:right;">0</td>
+      </tr>
+      <tr>
+        <td>GST at 5% of additional area</td>
+        <td style="text-align:right;">${gst5AdditionalDosti.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+        <td style="text-align:right;">0</td>
+        <td style="text-align:right;">0</td>
+      </tr>
+      <tr>
+        <td>GST at 5% of full new area</td>
+        <td style="text-align:right;">${gst5FullDosti.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+        <td style="text-align:right;">0</td>
+        <td style="text-align:right;">0</td>
+      </tr>
+      <tr>
+        <td>GST at 5% of construction cost</td>
+        <td style="text-align:right;">${gst18ConstructionDosti.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+        <td style="text-align:right;">0</td>
+        <td style="text-align:right;">0</td>
+      </tr>
+    </tbody>
+  </table>
+`;
+
+// --- Insert after "Your eligibility" table ---
+eligibilityTableContainer.innerHTML += yourLiabilitiesTableHTML;
+// Update launch rate displayed in liabilities note
+document.getElementById('launchRateInfoInline').innerText = `₹${launchPrice.toLocaleString('en-IN')}/sq.ft`;
+
+  // Build Hind CHS Eligibility table HTML
+  hindCHSEligibilityTableContainer.innerHTML = `
+    <table>
+      <thead>
+        <tr>
+        <th></th>
+        <th>Dosti</th>
+        <th>Ajmera</th>
+        <th>Runwal</th>
+        </tr>
+      </thead>
+      <tbody>
+      <tr class="pastel-green-row">
+          <td><strong>Proposed Area (sq.ft.)</strong></td>
+          <td style="text-align:right;">${proposedAreaHindCHS.Dosti.toFixed(2)}</td>
+          <td style="text-align:right;">${proposedAreaHindCHS.Ajmera.toFixed(2)}</td>
+          <td style="text-align:right;">${proposedAreaHindCHS.Runwal.toFixed(2)}</td>
+        </tr>
+        <tr>
+          <td>Pre-DA Rent Amount (Rs)</td>
+          <td style="text-align:center;">&ndash;</td>
+          <td style="text-align:right;">${hindCHS.ajmeraRent.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+          <td style="text-align:right;">${hindCHS.runwalRent.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+        </tr>
+        <tr>
+          <td>DA to IOD Rent Amount (Rs)</td>
+          <td style="text-align:center;">&ndash;</td>
+          <td style="text-align:right;">${daToIODHindCHS.ajmeraRent.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+          <td style="text-align:right;">${daToIODHindCHS.runwalRent.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+        </tr>
+      <tr class="pastel-blue-row">
+
+          <td><strong>Cumulative Back Dated Rent Amount (Rs)</strong></td>
+          <td style="text-align:right;">${backDatedHindCHSDosti.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+          <td style="text-align:right;">${backDatedHindCHSAjmera.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+           <td style="text-align:right;">${backDatedHindCHSRunwal.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+         
+        </tr>
+        <tr>
+          <td>12 Months rent after IOD (Rs)</td>
+          <td style="text-align:right;">${dosti12MonthRentHindCHS.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+          
+          <td style="text-align:right;">${ajmera12MonthRentHindCHS.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+          <td style="text-align:right;">${runwal12MonthRentHindCHS.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+        </tr>
+        <tr>
+          <td>13 - 24 Months rent after IOD (Rs)</td>
+          <td style="text-align:right;">${dosti13_24MonthRentHindCHS.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+          
+          <td style="text-align:right;">${ajmera13_24MonthRentHindCHS.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+          <td style="text-align:right;">${runwal13_24MonthRentHindCHS.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+        </tr>
+        <tr>
+          <td>25 - 36 Months rent after IOD (Rs)</td>
+          <td style="text-align:right;">${dosti25_36MonthRentHindCHS.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+          
+          <td style="text-align:right;">${ajmera25_36MonthRentHindCHS.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+          <td style="text-align:right;">${runwal25_36MonthRentHindCHS.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+        </tr>
+        <tr>
+          <td>37 - 42 Months rent after IOD (Rs)</td>
+<td style="text-align:right;">${dosti37_42MonthRentHindCHS.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+          <td style="text-align:right;">${ajmera37_42MonthRentHindCHS.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+          
+          <td style="text-align:right;">${runwal37_42MonthRentHindCHS.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+                  </tr>
+      <tr class="pastel-blue-row">
+
+  <td><strong>Total Rent (Rs)</strong></td>
+  <td style="text-align:right;">${totalDostiHindCHS.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+  
+  <td style="text-align:right;">${totalAjmeraHindCHS.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+  <td style="text-align:right;">${totalRunwalHindCHS.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+</tr>
+
+<tr>
+  <td><strong>Corpus (Rs)</strong></td>
+  <td style="text-align:right;">${corpusDostiHindCHS.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+  
+  <td style="text-align:right;">${corpusAjmeraHindCHS.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+  <td style="text-align:right;">${corpusRunwalHindCHS.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+</tr>
+
+<tr>
+  <td><strong>Shifting charges (Rs)</strong></td>
+  <td style="text-align:right;">${shiftingDostiHindCHS.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+  <td style="text-align:right;">${shiftingAjmeraHindCHS.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+  <td style="text-align:right;">${shiftingRunwalHindCHS.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+</tr>
+
+<tr>
+  <td><strong>Brokerage (Rs)</strong></td>
+  <td style="text-align:right;">${brokerageDostiHindCHS.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+  
+  <td style="text-align:right;">${brokerageAjmeraHindCHS.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+  <td style="text-align:right;">${brokerageRunwalHindCHS.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+</tr>
+
+      <tr class="pastel-green-row">
+  <td><strong>Total Cash Compensation (Rs)</strong></td>
+  <td style="text-align:right;">${totalCashDostiHindCHS.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+  
+  <td style="text-align:right;">${totalCashAjmeraHindCHS.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+  <td style="text-align:right;">${totalCashRunwalHindCHS.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+</tr>
+
+      <tr class="pastel-blue-row">
+  <td><strong>Value of additional area on completion (Rs)</strong></td>
+  <td style="text-align:right;">${((proposedAreaHindCHS.Dosti - hindCHSTotalMOFA) * completionPrice).toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+  
+  <td style="text-align:right;">${((proposedAreaHindCHS.Ajmera - hindCHSTotalMOFA) * completionPrice).toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+  <td style="text-align:right;">${((proposedAreaHindCHS.Runwal - hindCHSTotalMOFA) * completionPrice).toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+  
+</tr>
+
+     
+      </tbody>
+    </table>
+  `;
+
+  // Show the eligibility section and scroll into view
+  showSection(eligibilitySection);
+  eligibilitySection.scrollIntoView({behavior: 'smooth'});
+  
+    compareButton.style.display = 'none';
+
+  // --- Calculate values for Hind CHS liabilities ---
+const hindCHSProposedDosti = proposedAreaHindCHS.Dosti;
+const hindCHSProposedAjmera = proposedAreaHindCHS.Ajmera;
+const hindCHSProposedRunwal = proposedAreaHindCHS.Runwal;
+
+//const hindCHSTotalMOFA = wingAreas.A.totalMOFA + wingAreas.B.totalMOFA + wingAreas.C.totalMOFA + wingAreas.D.totalMOFA + wingAreas.E.totalMOFA;
+
+const hindCHSAdditionalDosti = hindCHSProposedDosti - hindCHSTotalMOFA;
+const hindCHSAdditionalAjmera = hindCHSProposedAjmera - hindCHSTotalMOFA;
+const hindCHSAdditionalRunwal = hindCHSProposedRunwal - hindCHSTotalMOFA;
+
+const hindCHSGST5AdditionalDosti = (launchPrice * hindCHSAdditionalDosti) * 0.05;
+const hindCHSGST5AdditionalAjmera = 0;
+const hindCHSGST5AdditionalRunwal = 0;
+
+const hindCHSGST5FullDosti = (launchPrice * hindCHSProposedDosti) * 0.05;
+const hindCHSGST5FullAjmera = 0;
+const hindCHSGST5FullRunwal = 0;
+
+const hindCHSGST18ConstructionDosti = (hindCHSProposedDosti * 6000) * 0.05;
+const hindCHSGST18ConstructionAjmera = 0;
+const hindCHSGST18ConstructionRunwal = 0;
+
+// --- Build Hind CHS Liabilities Table HTML ---
+const hindCHSLiabilitiesTableHTML = `
+  <h3 style="text-align:center; margin-top:30px;">Hind CHS level Potential Liabilities</h3>
+  <div style="font-size:15px; margin:28px 0 8px 0; padding:8px 12px; background:#eef6ff; border-radius:6px; border:1px solid #dde6ef;">
+    <strong>Note:</strong> GST for Hind CHS is calculated using the per square foot price at <strong>Launch rate</strong> 
+    (<span id="hindCHSLaunchRateInfoInline">₹35,000/sq.ft</span>), and construction cost is assumed to be <strong>₹6,000/sq.ft</strong>.
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th></th>
+        <th>Dosti</th>
+        <th>Ajmera</th>
+        <th>Runwal</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>GST at 0%</td>
+        <td style="text-align:right;">0</td>
+        <td style="text-align:right;">0</td>
+        <td style="text-align:right;">0</td>
+      </tr>
+      <tr>
+        <td>GST at 5% of additional area</td>
+        <td style="text-align:right;">${hindCHSGST5AdditionalDosti.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+        <td style="text-align:right;">0</td>
+        <td style="text-align:right;">0</td>
+      </tr>
+      <tr>
+        <td>GST at 5% of full new area</td>
+        <td style="text-align:right;">${hindCHSGST5FullDosti.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+        <td style="text-align:right;">0</td>
+        <td style="text-align:right;">0</td>
+      </tr>
+      <tr>
+        <td>GST at 5% of construction cost</td>
+        <td style="text-align:right;">${hindCHSGST18ConstructionDosti.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0})}</td>
+        <td style="text-align:right;">0</td>
+        <td style="text-align:right;">0</td>
+      </tr>
+    </tbody>
+  </table>
+`;
+
+// --- Insert after Hind CHS eligibility table ---
+hindCHSEligibilityTableContainer.innerHTML += hindCHSLiabilitiesTableHTML;
+
+// --- Update Hind CHS launch rate note dynamically ---
+document.getElementById('hindCHSLaunchRateInfoInline').innerText = `₹${launchPrice.toLocaleString('en-IN')}/sq.ft`;
+};
+
+
+
+  // Initial load setup
+  showSection(wingSelectionSection);
+  dateInputsDiv.style.display = 'none';
+  eligibilitySection.style.display = 'none';
+
+
+</script>
+</body>
+</html>
